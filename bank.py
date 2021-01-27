@@ -14,7 +14,8 @@ users = {}
 '''
 
 # 欢迎界面
-welcome = '''
+''' 
+welcome = 
 *********************************
 *    欢迎来到中国工商银行管理系统 *
 *********************************
@@ -27,6 +28,7 @@ welcome = '''
 *********************************
 '''
 
+
 # 专门来获取8位随机账号
 def getRandom():
     li = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
@@ -36,6 +38,7 @@ def getRandom():
         ch = li[random.randint(0, 9)]
         string = string + str(ch)
     return string
+
 
 # 银行的核心开户方法
 def bank_addUser(account, username, password, money, country, province, street, door):
@@ -60,13 +63,14 @@ def bank_addUser(account, username, password, money, country, province, street, 
         }
         return 1
 
+
 def bank_savemoney(username, money):
-    i = users.values()    # 字典里面的值给了i
     if username in users:  # 判断用户里面有没有用户名
-        users[username]["money"]=money+users[username]["money"]
+        users[username]["money"] = money + users[username]["money"]
         return 1
     else:
         return 2
+
 
 def query():
     username = input("请输入用户名:")
@@ -88,48 +92,50 @@ def query():
 
 
 def bank_query(username, password):
-    a = users.values()  #把值赋给a
-    if username in users:  #判断用户里面有没有用户名
-        for i in a:  #遍历字典
-            if password in users:   #
-                return 1
-            else:
-                return 2
+    a = users.values()  # 把值赋给a
+    if username in users:  # 判断用户里面有没有用户名
+        if password in users[username]["password"]:
+            return 1
+        else:
+            return 2
     else:
         return 3
+
+
 # 银行的核心取款方法
-def bank_withdraw_money(username,password,money):
-    a = users.values()     # 把值赋给a
+def bank_withdraw_money(username, password, money):
+    a = users.values()  # 把值赋给a
     if username in users:  # 判断用户里面有没有用户名
-        for i in a:   # 遍历字典
-            if password in users:
-                if (money < users[username]["money"]) or (money == users[username]["money"]):
-                    users[username]["money"]=users[username]["money"]-money
-                    return 1
-                else:
-                    return 3
+        if password == users[username]["password"]:
+            if (money < users[username]["money"]) or (money == users[username]["money"]):
+                users[username]["money"] = users[username]["money"] - money
+                return 1
             else:
-                return 2
+                return 3
+        else:
+            return 2
     else:
         return 0
+
 
 def withdraw_money():
     username = input("请输入用户名：")
     password = input("请输入取款密码：")
     money = int(input("请输入您的取款金额："))
     # 将数据传给银行
-    status1=bank_withdraw_money(username,password,money)
-    if status1==0:
+    status1 = bank_withdraw_money(username, password, money)
+    if status1 == 0:
         print("您输入的账号不存在！")
-    elif status1==2:
+    elif status1 == 2:
         print("您输入的密码错误！")
-    elif status1==3:
+    elif status1 == 3:
         print("您的余额不足！")
-    elif status1==1:
-        print("取款成功！您当前的余额为：",username,users[username]["money"])
+    elif status1 == 1:
+        print("取款成功！", "用户名为:", username, "您当前的余额为：", users[username]["money"])
+
 
 def savemoney():
-    username=input("请输入用户名:")
+    username = input("请输入用户名:")
     while True:
         money = input("请输入金额:")
         if money.isdigit():
@@ -137,12 +143,12 @@ def savemoney():
             break
         else:
             print("余额输入错误，请重新输入！")
-    print(users[username]["money"])
     returnvalue = bank_savemoney(username, money)
     if returnvalue == 1:
-        print("存钱成功！！！","您的账号为:",username,"您的余额为:",users[username]["money"])
+        print("存钱成功！！！", "您的账号为:", username, "您的余额为:", users[username]["money"])
     else:
         print("查无此用户！！！")
+
 
 # 普通的开户方法
 def addUser():
@@ -176,7 +182,25 @@ def addUser():
         print("您所在街道为:", users[username]["street"])
         print("您所在门牌号为:", users[username]["door"])
         print("开户行名为:", users[username]["bank_name"])
-        print(users)
+
+
+def write():
+    f = open("name.txt", "w+", encoding="utf-8")
+    for key in users.keys():
+        string = ""
+        string = string + key  # 先拼接姓名
+        string = string + "," + users[key]["account"]
+        string = string + "," + str(users[key]["password"])
+        string = string + "," + str(users[key]["money"])
+        string = string + "," + users[key]["country"]
+        string = string + "," + users[key]["province"]
+        string = string + "," + users[key]["street"]
+        string = string + "," + users[key]["door"]
+        string = string + "," + users[key]["bank_name"]
+        # 写入
+        f.write(string + "\n")
+    f.close()
+
 
 def bank_transfer(out_username, up_username, out_pass, out_money):
     if out_username in users and up_username in users:
@@ -189,6 +213,7 @@ def bank_transfer(out_username, up_username, out_pass, out_money):
             return 2
     else:
         return 1
+
 
 def transferMoney():
     out_username = input("请输入转出账号:")
@@ -206,21 +231,28 @@ def transferMoney():
     elif status5 == 0:
         users[out_username]["money"] = users[out_username]["money"] - out_money
         users[up_username]["money"] = users[up_username]["money"] + out_money
-        print("转账成功！","转出账号为:",out_username,"转出账号余额为:",users[out_username]["money"],"转入账号为:",up_username,"转入账号余额为:",users[up_username]["money"])
+        print("转账成功！", "转出账号为:", out_username, "转出账号余额为:", users[out_username]["money"], "转入账号为:", up_username,
+              "转入账号余额为:", users[up_username]["money"])
+
 
 while True:
     print(welcome)  # 打印欢迎信息
     chose = input("请输入您的业务编号：")
     if chose == "1":
         addUser()
+        write()
     elif chose == "2":
         savemoney()
+        write()
     elif chose == "3":
         withdraw_money()
+        write()
     elif chose == "4":
         transferMoney()
+        write()
     elif chose == "5":
         query()
+        write()
     elif chose == "6":
         print("退出成功！欢迎下次光临！")
         break
