@@ -96,7 +96,7 @@ def bank_addUser(account, username, password, money, country, province, street, 
         con.commit()
         cursor.close()
         con.close()
-        if num==1:
+        if nu==1:
             return 2
         else:
             users[username] = {
